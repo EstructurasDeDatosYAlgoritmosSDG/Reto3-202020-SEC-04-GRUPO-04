@@ -45,7 +45,7 @@ def newAnalyzer():
                 }
     
     analyzer['accidentes'] = lt.newList('SINGLE_LINKED', compareIds)
-    analyzer['dateIndex'] = om.newMap(omaptype='BST', comparefunction= compareDates)
+    analyzer['dateIndex'] = om.newMap(omaptype='RBT', comparefunction= compareDates)
 
     return analyzer
 
@@ -81,7 +81,7 @@ def updateDateIndex(map, accidente):
 
 def addDateIndex(datentry, accidente):
     """
-    Actualiza un indice de tipo de crimenes.  Este indice tiene una lista
+    Actualiza un indice de tipo de accidentes.  Este indice tiene una lista
     de crimenes y una tabla de hash cuya llave es el tipo de crimen y
     el valor es una lista con los crimenes de dicho tipo en la fecha que
     se está consultando (dada por el nodo del arbol)
@@ -164,6 +164,48 @@ def getAccidentsByDate(analyzer, date):
     data = lst['value']['lstaccidents']
     return data
 
+def getAccidentsByRange(analizer, initial_date, final_date):
+    fechas = om.keys(analizer['dateIndex'], initial_date, final_date)
+    cant_fechas = lt.size(fechas)
+    categorias = m.newMap(numelements=0,maptype='CHAINING',loadfactor=0.5,comparefunction=comparar_categorias)
+    cant_accidentes = 0 
+    i = 1
+    while i <= cant_fechas:
+        llave = lt.getElement(fechas, i)
+        arbol = om.get(analizer['dateIndex'], llave)
+        severityIndex = arbol['value']['severityIndex']
+        llaves_severityIndex = m.keySet(severityIndex)
+        j = 1
+        while j <= lt.size(llaves_severityIndex):
+            categoria = lt.getElement(llaves_severityIndex, j)
+            cat = m.get(severityIndex,categoria)
+            accidentes = lt.size(cat['value']['lstofseverities'])
+            cant_accidentes += accidentes
+            esta_categoria = m.contains(categorias, categoria)
+            if not esta_categoria:
+                m.put(categorias,categoria,0)
+            cant = m.get(categorias,categoria)
+            cant = cant['value']
+            cant += accidentes
+            m.put(categorias,categoria,cant)
+            j += 1
+        i += 1
+    i = 1
+    mayor = 0
+    cat = -10
+    llaves_categorias = m.keySet(categorias)
+    while i <= lt.size(llaves_categorias):
+        categoria2 = lt.getElement(llaves_categorias, i)
+        valor = m.get(categorias, categoria2)
+        valor = valor['value']
+        if valor > mayor:
+            mayor = valor
+            cat = categoria2
+        i += 1
+    return cant_accidentes, cat
+
+    
+
 
 # ==============================
 # Funciones de Comparacion
@@ -196,6 +238,19 @@ def compareSeverities(severidad1, severidad2):
     if (severidad1 == severidad):
         return 0
     elif (severidad1 > severidad):
+        return 1
+    else:
+        return -1
+
+def comparar_categorias(keyname, author):
+    """
+    Compara dos productoras. El primero es una cadena
+    y el segundo un entry de un map
+    """
+    authentry = me.getKey(author)
+    if (keyname == authentry):
+        return 0
+    elif (keyname > authentry):
         return 1
     else:
         return -1

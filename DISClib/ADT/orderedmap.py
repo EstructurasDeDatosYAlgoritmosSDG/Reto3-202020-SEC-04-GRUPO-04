@@ -312,3 +312,4 @@ def values(map, keylo, keyhi):
         Exception
     """
     return om.keys(map, keylo, keyhi)
+    

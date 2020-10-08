@@ -104,3 +104,8 @@ def getAccidentsByDate(analyzer, date):
     """
     date = datetime.datetime.strptime(date, '%Y-%m-%d')
     return model.getAccidentsByDate(analyzer, date.date())
+
+def getAccidentesByRange(analizer, initial_date, final_date):
+    initial_date = datetime.datetime.strptime(initial_date, '%Y-%m-%d')
+    final_date = datetime.datetime.strptime(final_date, '%Y-%m-%d')
+    return model.getAccidentsByRange(analizer, initial_date.date(), final_date.date())
