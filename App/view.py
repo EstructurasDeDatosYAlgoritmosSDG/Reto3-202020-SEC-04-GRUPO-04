@@ -38,7 +38,7 @@ operación seleccionada.
 # ___________________________________________________
 
 
-accidentsfile = 'us_accidents_small.csv'
+accidentsfile = 'us_accidents_dis_2016.csv'
 
 # ___________________________________________________
 #  Menu principal
@@ -92,10 +92,16 @@ while True:
 
 
     elif int(inputs[0]) == 4:
-        print("\nRequerimiento No 1 del reto 3: ")
+        print('n')
+        
 
     elif int(inputs[0]) == 5:
-        print("\nRequerimiento No 1 del reto 3: ")
+        fecha_inicio = input("\nIngrese la fecha de inicio (YYYY-MM-DD): ")
+        fecha_final = input("\nIngrese la fecha final (YYYY-MM-DD): ")
+        valores = controller.getAccidentesByRange(cont, fecha_inicio,fecha_final)
+        print("\nEl número total de accidentes en el rango de fechas es de:",valores[0])
+        print("La categoría de accidentes más reportadas en el rango de fechas es:", valores[1])
+        
 
     elif int(inputs[0]) == 6:
         print("\nRequerimiento No 1 del reto 3: ")
