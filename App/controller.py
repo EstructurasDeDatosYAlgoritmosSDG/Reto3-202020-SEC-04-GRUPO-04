@@ -156,3 +156,16 @@ def getAccidentsByHourRange(analizer, initial_hour, final_hour):
     segundos2 = int(final_hour[6:8])
     final_hour2 = datetime.time(hora2,minutos2,segundos2)
     return model.getAccidentsByHourRange(analizer, initial_hour1, final_hour2)
+
+def getAccidentesByRangeDate(analyzer, initialDate, finalDate):
+
+    initialDate = datetime.datetime.strptime(initialDate,'%Y-%m-%d')
+    finalDate = datetime.datetime.strptime(finalDate,'%Y-%m-%d')
+    return model.getAccidentsByRangeDate(analyzer, initialDate, finalDate)
+
+def MostSeverity(analyzer, initialDate, finalDate):
+
+    initialDate = datetime.datetime.strptime(initialDate,'%Y-%m-%d')
+    finalDate = datetime.datetime.strptime(finalDate,'%Y-%m-%d')
+    return model.getMostSeverity(analyzer, initialDate, finalDate)
+
