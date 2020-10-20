@@ -38,7 +38,7 @@ operación seleccionada.
 # ___________________________________________________
 
 
-accidentsfile = 'us_accidents_dis_2016.csv'
+accidentsfilesmall = 'us_accidents_small.csv'
 
 # ___________________________________________________
 #  Menu principal
@@ -77,7 +77,7 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("\nCargando información de accidentes ....")
-        controller.loadData(cont, accidentsfile)
+        controller.loadData(cont, accidentsfilesmall)
         print('Accidentes cargados: ' + str(controller.accidentsSize(cont)))
         print('Altura del arbol: ' + str(controller.indexHeight(cont)))
         print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
@@ -92,7 +92,11 @@ while True:
 
 
     elif int(inputs[0]) == 4:
-        print('n')
+        print("\nBuscando accidentes anteriores a una fecha en específico: ")
+        date = input("Ingrese la fecha (YYYY-MM-DD): ")
+        valores = controller.getAccidentsBeforeDate(cont, date)
+        print('\nEl total de accidentes ocurridos antes de la fecha indicada es de:', valores[0])
+        print('\nLa fecha en la que más accidentes se reportaron fue:', valores[1] )
         
 
     elif int(inputs[0]) == 5:
