@@ -142,6 +142,11 @@ def getAccidentesByRange(analizer, initial_date, final_date):
     final_date = datetime.datetime.strptime(final_date, '%Y-%m-%d')
     return model.getAccidentsByRange(analizer, initial_date.date(), final_date.date())
 
+
+def getAccidentsBeforeDate(analyzer, date):
+    date = datetime.datetime.strptime(date, '%Y-%m-%d')
+    return model.getAccidentsBeforeDate(analyzer, date.date())
+
 def getAccidentsByGeographicZone(analyzer, longitud, latitud, radio):
     return model.getAccidentsByGeographicZone(analyzer, longitud, latitud, radio)
 

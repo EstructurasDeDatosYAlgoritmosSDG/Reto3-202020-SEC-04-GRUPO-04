@@ -21,6 +21,7 @@
  """
 import config
 from DISClib.ADT import list as lt
+from DISClib.DataStructures import listiterator as it
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import map as m
@@ -313,6 +314,32 @@ def getAccidentsByRange(analizer, initial_date, final_date):
         i += 1
     return cant_accidentes, cat
 
+
+def getAccidentsBeforeDate(analyzer, date):
+    existe_fecha = om.contains(analyzer['dateIndex'], date)
+    if existe_fecha == False:
+        return('Esta fecha no existe dentro de la documentación.')
+    else:
+        first_date = om.minKey(analyzer['dateIndex'])
+        fechas = om.keys(analyzer['dateIndex'], first_date, date)
+        lt.removeLast(fechas)
+        cant_fechas = lt.size(fechas)
+        cant_accidentes = 0
+        i = 1
+        mayor = 0
+        fecha_final = -10
+        while i <= cant_fechas:
+            llave = lt.getElement(fechas, i)
+            arbol = om.get(analyzer['dateIndex'], llave)
+            valor = lt.size(arbol['value']['lstaccidents'])        
+            cant_accidentes += valor
+            if valor > mayor:
+                mayor = valor
+                fecha_final = llave
+            i += 1
+    return cant_accidentes, fecha_final
+    
+
 def getAccidentsByHourRange(analizer, initial_hour, final_hour):
     fechas = om.keys(analizer['hourIndex'], initial_hour, final_hour)
     cant_fechas = lt.size(fechas)
@@ -457,8 +484,6 @@ def getMostSeverity(analyzer, initialDate, finalDate):
         return 3
     elif(mayor == s4):
         return 4
-
-
 
 # ==============================
 # Funciones de Comparacion
