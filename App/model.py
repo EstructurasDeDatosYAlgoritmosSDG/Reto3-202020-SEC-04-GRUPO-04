@@ -136,7 +136,7 @@ def updateHourIndex(map, accidente):
     occurredhour = accidente['Start_Time'][11:]
     hora = int(occurredhour[:2])
     minutos = int(occurredhour[3:5])
-    o = str(hora), str(minutos)
+    
     if minutos <= 30:
         minutos = 30
     elif minutos < 60:
@@ -148,7 +148,7 @@ def updateHourIndex(map, accidente):
             minutos = int('00')
     segundos = int('00')
     accidenthour = datetime.time(hora,minutos,segundos)
-    print(accidenthour, o)
+    
     entry = om.get(map, accidenthour)
     if entry is None:
         datentry = newDataEntryHour(accidente)
@@ -439,6 +439,51 @@ def getAccidentsByGeographicZone(analyzer, longitud, latitud, radio):
             j += 1
         i += 1
     return accidentes_reportados, accidentes
+
+def getAccidentsByRangeDate(analyzer, initialDate,finalDate):
+
+    """
+    Retornal el número de accidentes ocurridos en un rango de fechas
+    """
+
+    lst = om.values(analyzer['dateIndex'], initialDate,finalDate)
+    
+    return lst
+
+def getAccidentsBySeverity(analyzer, initialDate, finalDate, severity):
+
+    accidentDate = om.get(analyzer['dateIndex'], initialDate, finalDate)
+    if accidentDate['key'] is not None:
+        severityMap = me.getValue(accidentDate)['severityIndex']
+        numSeverity = m.get(severityMap, severity)
+        if(numSeverity is not None):
+            return m.size(me.getValue(numSeverity)['lstofseverities'])
+        return 0
+
+def getMostSeverity(analyzer, initialDate, finalDate):
+
+    s1= getAccidentsBySeverity(analyzer,initialDate,finalDate,1)
+    s2 = getAccidentsBySeverity(analyzer,initialDate,finalDate,2)
+    s3 = getAccidentsBySeverity(analyzer,initialDate,finalDate,3)
+    s4 = getAccidentsBySeverity(analyzer,initialDate,finalDate,4)
+
+    mayor = s1
+    
+    if(mayor < s2):
+        mayor = s2
+    elif(mayor < s3):
+        mayor = s3
+    elif(mayor < s4):
+        mayor = s4
+    else:
+        return 1
+
+    if(mayor == s2):
+        return 2
+    elif(mayor == s3):
+        return 3
+    elif(mayor == s4):
+        return 4
 
 # ==============================
 # Funciones de Comparacion
