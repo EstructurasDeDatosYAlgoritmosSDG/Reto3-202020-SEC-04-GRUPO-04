@@ -25,6 +25,7 @@ from App import model
 import datetime
 import csv
 
+
 """
 El controlador se encarga de mediar entre la vista y el modelo.
 Existen algunas operaciones en las que se necesita invocar
@@ -61,11 +62,14 @@ def loadData(analyzer, accidentsfile):
                                 delimiter=",")
     for accidente in input_file:
         model.addAccident(analyzer, accidente)
+        model.addAccidentHour(analyzer, accidente)
     return analyzer
 
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
+
+# Mapa fechas
 
 def accidentsSize(analyzer):
     """
@@ -98,6 +102,34 @@ def maxKey(analyzer):
     """
     return model.maxKey(analyzer)
 
+# Mapa horas
+def indexHeightHour(analyzer):
+    """
+    Altura del indice (arbol)
+    """
+    return model.indexHeightHour(analyzer)
+
+def indexSizeHour(analyzer):
+    """
+    Numero de nodos en el arbol
+    """
+    return model.indexSizeHour(analyzer)
+
+def minKeyHour(analyzer):
+    """
+    La menor llave del arbol
+    """
+    return model.minKeyHour(analyzer)
+
+
+def maxKeyHour(analyzer):
+    """
+    La mayor llave del arbol
+    """
+    return model.maxKeyHour(analyzer)
+
+# Siguiente
+
 def getAccidentsByDate(analyzer, date):
     """
     Retorna el total de accidentes en una fecha
@@ -109,3 +141,18 @@ def getAccidentesByRange(analizer, initial_date, final_date):
     initial_date = datetime.datetime.strptime(initial_date, '%Y-%m-%d')
     final_date = datetime.datetime.strptime(final_date, '%Y-%m-%d')
     return model.getAccidentsByRange(analizer, initial_date.date(), final_date.date())
+
+def getAccidentsByGeographicZone(analyzer, longitud, latitud, radio):
+    return model.getAccidentsByGeographicZone(analyzer, longitud, latitud, radio)
+
+def getAccidentsByHourRange(analizer, initial_hour, final_hour):
+    hora1 = int(initial_hour[:2])
+    minutos1 = int(initial_hour[3:5])
+    segundos1 = int(initial_hour[6:8])
+    initial_hour1 = datetime.time(hora1,minutos1,segundos1)
+
+    hora2 = int(final_hour[:2])
+    minutos2 = int(final_hour[3:5])
+    segundos2 = int(final_hour[6:8])
+    final_hour2 = datetime.time(hora2,minutos2,segundos2)
+    return model.getAccidentsByHourRange(analizer, initial_hour1, final_hour2)
