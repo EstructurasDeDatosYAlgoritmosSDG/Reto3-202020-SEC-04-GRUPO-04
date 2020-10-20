@@ -135,7 +135,7 @@ def updateHourIndex(map, accidente):
     occurredhour = accidente['Start_Time'][11:]
     hora = int(occurredhour[:2])
     minutos = int(occurredhour[3:5])
-    o = str(hora), str(minutos)
+    
     if minutos <= 30:
         minutos = 30
     elif minutos < 60:
@@ -147,7 +147,7 @@ def updateHourIndex(map, accidente):
             minutos = int('00')
     segundos = int('00')
     accidenthour = datetime.time(hora,minutos,segundos)
-    print(accidenthour, o)
+    
     entry = om.get(map, accidenthour)
     if entry is None:
         datentry = newDataEntryHour(accidente)

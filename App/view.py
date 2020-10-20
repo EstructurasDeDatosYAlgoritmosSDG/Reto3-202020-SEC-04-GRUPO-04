@@ -100,10 +100,11 @@ while True:
 
 
     elif int(inputs[0]) == 4:
-        print("\nBuscando accidentes en una fecha en específico: ")
-        date = input("Fecha (YYYY-MM-DD): ")
-        lista = controller.getAccidentsByDate(cont, date)
-        print("\nTotal de accidentes en la fecha: " + str(lt.size(lista)))
+        print("\nBuscando accidentes en un rango de fecha específico:")
+        initialDate = input("\nPor favor digite la fecha inicial del rango:")
+        finalDate = input("\nPor favor digite la fecha final del rango:")
+        total = controller.getAccidentesByRange(cont, initialDate,finalDate)
+        mayor = controller.MostSeverity(cont,initialDate,finalDate)
         
 
     elif int(inputs[0]) == 5:
