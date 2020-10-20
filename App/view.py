@@ -103,7 +103,7 @@ while True:
         print("\nBuscando accidentes en un rango de fecha específico:")
         initialDate = input("\nPor favor digite la fecha inicial del rango:")
         finalDate = input("\nPor favor digite la fecha final del rango:")
-        total = controller.getAccidentesByRange(cont, initialDate,finalDate)
+        total = controller.getAccidentesByRangeDate(cont, initialDate,finalDate)
         mayor = controller.MostSeverity(cont,initialDate,finalDate)
         
 
