@@ -84,13 +84,13 @@ while True:
     elif int(inputs[0]) == 2:
         print("\nCargando información de accidentes ....")
         controller.loadData(cont, accidentsfilesmall)
-        print('Accidentes cargados: ' + str(controller.accidentsSize(cont)))
-        print('Altura del arbol: ' + str(controller.indexHeight(cont)))
-        print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
-        print('Menor Llave: ' + str(controller.minKey(cont)))
-        print('Mayor Llave: ' + str(controller.maxKey(cont)))
-        print('Menor Llave dos: ' + str(controller.minKeyHour(cont)))
-        print('Mayor Llave dos: ' + str(controller.maxKeyHour(cont)))
+        print('\nEl total de accidentes cargados es de: ' + str(controller.accidentsSize(cont)))
+        print('La altura del árbol es: ' + str(controller.indexHeight(cont)))
+        print('El total de elementos en el árbol es de: ' + str(controller.indexSize(cont)))
+        print('\nLa menor fecha registrada es: ' + str(controller.minKey(cont)))
+        print('La mayor fechar registrada es: ' + str(controller.maxKey(cont)))
+        print('\nLa menor hora registrada es: ' + str(controller.minKeyHour(cont)))
+        print('La mayor hora registrada es: ' + str(controller.maxKeyHour(cont)))
 
 
     elif int(inputs[0]) == 3:
@@ -168,8 +168,3 @@ while True:
         print('\nEl total de accidentes reportados en ese radio es de:',resultado[0])
 
 
-    elif int(inputs[0]) == 9:
-        print("\nRequerimiento No 1 del reto 3: ")
-    else:
-        sys.exit(0)
-sys.exit(0)
