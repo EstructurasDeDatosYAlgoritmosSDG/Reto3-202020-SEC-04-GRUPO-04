@@ -22,7 +22,6 @@
 
 import sys
 import config
-from DISClib.ADT import list as lt
 from App import controller
 assert config
 from DISClib.ADT import map as m
@@ -45,6 +44,7 @@ accidentsfile2017 = 'us_accidents_dis_2017.csv'
 accidentsfile2018 = 'us_accidents_dis_2018.csv'
 accidentsfile2019 = 'us_accidents_dis_2019.csv'
 accidentsfileDec19 = 'us_accidents_Dec19.csv'
+
 
 # ___________________________________________________
 #  Menu principal
@@ -99,9 +99,12 @@ while True:
         lista = controller.getAccidentsByDate(cont, date)
         print("\nTotal de accidentes en la fecha: " + str(lt.size(lista)))
 
-
     elif int(inputs[0]) == 4:
-        print('n')
+        print("\nBuscando accidentes anteriores a una fecha en específico: ")
+        date = input("Ingrese la fecha (YYYY-MM-DD): ")
+        valores = controller.getAccidentsBeforeDate(cont, date)
+        print('\nEl total de accidentes ocurridos antes de la fecha indicada es de:', valores[0])
+        print('\nLa fecha en la que más accidentes se reportaron fue:', valores[1] )
         
 
     elif int(inputs[0]) == 5:

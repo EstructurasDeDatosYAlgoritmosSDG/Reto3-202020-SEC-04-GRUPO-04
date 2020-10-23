@@ -21,6 +21,7 @@
  """
 import config
 from DISClib.ADT import list as lt
+from DISClib.DataStructures import listiterator as it
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import map as m
@@ -135,7 +136,7 @@ def updateHourIndex(map, accidente):
     occurredhour = accidente['Start_Time'][11:]
     hora = int(occurredhour[:2])
     minutos = int(occurredhour[3:5])
-    o = str(hora), str(minutos)
+    
     if minutos <= 30:
         minutos = 30
     elif minutos < 60:
@@ -147,7 +148,7 @@ def updateHourIndex(map, accidente):
             minutos = int('00')
     segundos = int('00')
     accidenthour = datetime.time(hora,minutos,segundos)
-    print(accidenthour, o)
+    
     entry = om.get(map, accidenthour)
     if entry is None:
         datentry = newDataEntryHour(accidente)
@@ -313,6 +314,32 @@ def getAccidentsByRange(analizer, initial_date, final_date):
         i += 1
     return cant_accidentes, cat
 
+
+def getAccidentsBeforeDate(analyzer, date):
+    existe_fecha = om.contains(analyzer['dateIndex'], date)
+    if existe_fecha == False:
+        return('Esta fecha no existe dentro de la documentación.')
+    else:
+        first_date = om.minKey(analyzer['dateIndex'])
+        fechas = om.keys(analyzer['dateIndex'], first_date, date)
+        lt.removeLast(fechas)
+        cant_fechas = lt.size(fechas)
+        cant_accidentes = 0
+        i = 1
+        mayor = 0
+        fecha_final = -10
+        while i <= cant_fechas:
+            llave = lt.getElement(fechas, i)
+            arbol = om.get(analyzer['dateIndex'], llave)
+            valor = lt.size(arbol['value']['lstaccidents'])        
+            cant_accidentes += valor
+            if valor > mayor:
+                mayor = valor
+                fecha_final = llave
+            i += 1
+    return cant_accidentes, fecha_final
+    
+
 def getAccidentsByHourRange(analizer, initial_hour, final_hour):
     fechas = om.keys(analizer['hourIndex'], initial_hour, final_hour)
     cant_fechas = lt.size(fechas)
@@ -413,7 +440,50 @@ def getAccidentsByGeographicZone(analyzer, longitud, latitud, radio):
         i += 1
     return accidentes_reportados, accidentes
 
+def getAccidentsByRangeDate(analyzer, initialDate,finalDate):
 
+    """
+    Retornal el número de accidentes ocurridos en un rango de fechas
+    """
+
+    lst = om.values(analyzer['dateIndex'], initialDate,finalDate)
+    
+    return lst
+
+def getAccidentsBySeverity(analyzer, initialDate, finalDate, severity):
+
+    accidentDate = om.get(analyzer['dateIndex'], initialDate, finalDate)
+    if accidentDate['key'] is not None:
+        severityMap = me.getValue(accidentDate)['severityIndex']
+        numSeverity = m.get(severityMap, severity)
+        if(numSeverity is not None):
+            return m.size(me.getValue(numSeverity)['lstofseverities'])
+        return 0
+
+def getMostSeverity(analyzer, initialDate, finalDate):
+
+    s1= getAccidentsBySeverity(analyzer,initialDate,finalDate,1)
+    s2 = getAccidentsBySeverity(analyzer,initialDate,finalDate,2)
+    s3 = getAccidentsBySeverity(analyzer,initialDate,finalDate,3)
+    s4 = getAccidentsBySeverity(analyzer,initialDate,finalDate,4)
+
+    mayor = s1
+    
+    if(mayor < s2):
+        mayor = s2
+    elif(mayor < s3):
+        mayor = s3
+    elif(mayor < s4):
+        mayor = s4
+    else:
+        return 1
+
+    if(mayor == s2):
+        return 2
+    elif(mayor == s3):
+        return 3
+    elif(mayor == s4):
+        return 4
 
 # ==============================
 # Funciones de Comparacion

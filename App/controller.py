@@ -142,6 +142,11 @@ def getAccidentesByRange(analizer, initial_date, final_date):
     final_date = datetime.datetime.strptime(final_date, '%Y-%m-%d')
     return model.getAccidentsByRange(analizer, initial_date.date(), final_date.date())
 
+
+def getAccidentsBeforeDate(analyzer, date):
+    date = datetime.datetime.strptime(date, '%Y-%m-%d')
+    return model.getAccidentsBeforeDate(analyzer, date.date())
+
 def getAccidentsByGeographicZone(analyzer, longitud, latitud, radio):
     return model.getAccidentsByGeographicZone(analyzer, longitud, latitud, radio)
 
@@ -156,3 +161,16 @@ def getAccidentsByHourRange(analizer, initial_hour, final_hour):
     segundos2 = int(final_hour[6:8])
     final_hour2 = datetime.time(hora2,minutos2,segundos2)
     return model.getAccidentsByHourRange(analizer, initial_hour1, final_hour2)
+
+def getAccidentesByRangeDate(analyzer, initialDate, finalDate):
+
+    initialDate = datetime.datetime.strptime(initialDate,'%Y-%m-%d')
+    finalDate = datetime.datetime.strptime(finalDate,'%Y-%m-%d')
+    return model.getAccidentsByRangeDate(analyzer, initialDate, finalDate)
+
+def MostSeverity(analyzer, initialDate, finalDate):
+
+    initialDate = datetime.datetime.strptime(initialDate,'%Y-%m-%d')
+    finalDate = datetime.datetime.strptime(finalDate,'%Y-%m-%d')
+    return model.getMostSeverity(analyzer, initialDate, finalDate)
+
