@@ -26,6 +26,7 @@ from App import controller
 assert config
 from DISClib.ADT import map as m
 
+
 """
 La vista se encarga de la interacción con el usuario.
 Presenta el menu de opciones  y  por cada seleccion
@@ -119,7 +120,15 @@ while True:
         else:
             print("\nFormato de fecha incorrecto")
     elif int(inputs[0]) == 6:
-        print("\nRequerimiento No 1 del reto 3: ")
+        fechaIncicial = input('Por favor digite la fecha incial del rango de búsqueda (YYYY-MM-DD): ')
+        fechaFinal = input('Por favor digite la fecha final del rango de búsqueda (YYYY-MM-DD): ')
+        resultado = controller.prueba(cont,fechaIncicial,fechaFinal)
+        total_acc = controller.getAccidentesByRange(cont,fechaIncicial,fechaFinal)
+        if(resultado == None):
+            print("\nEn la fecha ingresada no se registra ningún accidente o no se encuentra en la base de datos, por favor vuelva a intentar.")
+        else:
+            print ('\nEl número total de accidentes presentados entre estas dos fechas fue de: ',total_acc[0],'\nSiendo ',resultado,' el estado con mayor cantidad de accidentes.')
+
 
     elif int(inputs[0]) == 7:
         hora_inicio = input("\nIngrese la hora de inicio (HH:MM): ")

@@ -44,7 +44,7 @@ def newAnalyzer():
 
     analyzer = {'accidentes': None,
                 'dateIndex': None,
-                'hourIndex': None
+                'hourIndex': None,
                 }
     
     analyzer['accidentes'] = lt.newList('SINGLE_LINKED', compareIds)
@@ -102,19 +102,38 @@ def addDateIndex(datentry, accidente):
     else:
         entry = me.getValue(severidad)
         lt.addLast(entry['lstofseverities'], accidente)
+
+    stateIndex = datentry['stateIndex']
+    estado = m.get(stateIndex, accidente['State'])
+    if (estado is None):
+        entry = newStateEntry(accidente['State'], accidente)
+        lt.addLast(entry['lstofstates'], accidente)
+        m.put(stateIndex, accidente['State'], entry)
+    else:
+        entry = me.getValue(estado)
+        lt.addLast(entry['lstofstates'], accidente)
+
     return datentry
+
+
 
 def newDataEntry(accidente):
     """
     Crea una entrada en el indice por fechas, es decir en el arbol
     binario.
     """
-    entry = {'severityIndex': None, 'lstaccidents': None}
+    entry = {'severityIndex': None, 'lstaccidents': None, 'stateIndex': None}
     entry['severityIndex'] = m.newMap(numelements=30,
                                      maptype='PROBING',
                                      comparefunction=compareSeverities)
     entry['lstaccidents'] = lt.newList('SINGLE_LINKED', compareDates)
+    entry['stateIndex'] = m.newMap(numelements=30,
+                                     maptype='PROBING',
+                                     comparefunction=comparar_estados) 
     return entry
+
+
+
 
 # Mapa horas
 
@@ -190,6 +209,8 @@ def newDataEntryHour(accidente):
     entry['lstaccidents'] = lt.newList('SINGLE_LINKED', compareHours)
     return entry
 
+
+
 # Para los dos
 
 def newSeverityEntry(Severity, accidente):
@@ -202,6 +223,15 @@ def newSeverityEntry(Severity, accidente):
     ofentry['lstofseverities'] = lt.newList('SINGLELINKED', compareSeverities)
     return ofentry
 
+def newStateEntry(State, accidente):
+    """
+    Crea una entrada en el indice por estado en el que se dio el accidente, es decir en
+    la tabla de hash, que se encuentra en cada nodo del arbol.
+    """
+    estados = {'state': None, 'lstofstates': None}
+    estados['state'] = State
+    estados['lstofstates'] = lt.newList('SINGLELINKED', comparar_estados)
+    return estados
 
 # ==============================
 # Funciones de consulta
@@ -263,6 +293,8 @@ def maxKeyHour(analyzer):
     """Numero de autores leido
     """
     return om.maxKey(analyzer['hourIndex'])
+
+
 
 # siguiente
 
@@ -440,16 +472,6 @@ def getAccidentsByGeographicZone(analyzer, longitud, latitud, radio):
         i += 1
     return accidentes_reportados, accidentes
 
-def getAccidentsByRangeDate(analyzer, initialDate,finalDate):
-
-    """
-    Retornal el número de accidentes ocurridos en un rango de fechas
-    """
-
-    lst = om.values(analyzer['dateIndex'], initialDate,finalDate)
-    
-    return lst
-
 def getAccidentsBySeverity(analyzer, initialDate, finalDate, severity):
 
     accidentDate = om.get(analyzer['dateIndex'], initialDate, finalDate)
@@ -460,30 +482,65 @@ def getAccidentsBySeverity(analyzer, initialDate, finalDate, severity):
             return m.size(me.getValue(numSeverity)['lstofseverities'])
         return 0
 
-def getMostSeverity(analyzer, initialDate, finalDate):
+def state_accidents(analyzer, fechaInicial, fechaFinal):
 
-    s1= getAccidentsBySeverity(analyzer,initialDate,finalDate,1)
-    s2 = getAccidentsBySeverity(analyzer,initialDate,finalDate,2)
-    s3 = getAccidentsBySeverity(analyzer,initialDate,finalDate,3)
-    s4 = getAccidentsBySeverity(analyzer,initialDate,finalDate,4)
 
-    mayor = s1
+
+    llaves = om.keys(analyzer['dateIndex'],fechaInicial, fechaFinal)
+    cant_llaves= lt.size(llaves)
+    tamanio = lt.size(om.values(analyzer['dateIndex'],fechaInicial, fechaFinal))
+    i=1
+    estados = m.newMap(numelements=0, maptype='CHAINING', loadfactor=0.5, comparefunction=comparar_estados)
+
+    if(lt.isPresent(llaves, fechaFinal) == 0 or lt.isPresent(llaves, fechaInicial) == 0):
+        return None
     
-    if(mayor < s2):
-        mayor = s2
-    elif(mayor < s3):
-        mayor = s3
-    elif(mayor < s4):
-        mayor = s4
-    else:
-        return 1
+    else: 
+        while i <= cant_llaves:
+            llave = lt.getElement(llaves, i)
+            tree = om.get(analyzer['dateIndex'], llave)
+            stateIndex =tree['value']['stateIndex']
+            llaves_stateIndex = m.keySet(stateIndex)
+            tamanio_llaves = lt.size(llaves_stateIndex)
+            j=1
+            while j <= tamanio_llaves:
+                estado = lt.getElement(llaves_stateIndex, j)
+                stat = m.get(stateIndex, estado)
+                exist_state= m.contains(estados,estado)
+                if not exist_state:
+                    m.put(estados,estado,0)
+                cant = m.get(estados, estado)
+                cant= cant['value']
+                cant += tamanio
+                m.put(estados, estado, cant)    
+                j+=1
+            i+=1
+    
+    z=1
+    mayor = 0
+    stat = ' '
+    llaves_estados = m.keySet(estados)
 
-    if(mayor == s2):
-        return 2
-    elif(mayor == s3):
-        return 3
-    elif(mayor == s4):
-        return 4
+    while z <= lt.size(llaves_estados):
+        estadod = lt.getElement(llaves_estados, z)
+        valor= m.get(estados, estadod)
+        valor = valor['value']
+
+        if(valor > mayor):
+            mayor = valor
+            stat= estadod
+        z+=1
+
+    return  stat
+
+
+    
+
+
+
+
+
+    
 
 # ==============================
 # Funciones de Comparacion
@@ -549,3 +606,16 @@ def comparar_categorias(keyname, author):
         return 1
     else:
         return -1
+
+def comparar_estados(keyname, estado):
+
+    authentry = me.getKey(estado)
+    if (keyname == authentry):
+        return 0
+    elif (keyname > authentry):
+        return 1
+    else:
+        return -1
+
+
+
