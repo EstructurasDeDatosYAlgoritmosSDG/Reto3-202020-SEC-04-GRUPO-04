@@ -39,6 +39,7 @@ operación seleccionada.
 # ___________________________________________________
 
 accidentsfilesmall = 'us_accidents_small.csv'
+small2 = 'small2.csv'
 accidentsfile2016 = 'us_accidents_dis_2016.csv'
 accidentsfile2017 = 'us_accidents_dis_2017.csv'
 accidentsfile2018 = 'us_accidents_dis_2018.csv'
@@ -82,7 +83,7 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("\nCargando información de accidentes ....")
-        controller.loadData(cont, accidentsfilesmall)
+        controller.loadData(cont, small2)
         print('Accidentes cargados: ' + str(controller.accidentsSize(cont)))
         print('Altura del arbol: ' + str(controller.indexHeight(cont)))
         print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
